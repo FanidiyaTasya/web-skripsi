@@ -1,0 +1,88 @@
+body {
+    background: #f4f6f9;
+}
+
+.main-wrapper {
+    max-width: 900px;
+    margin: auto;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+/* PROGRESS */
+.wizard-progress .progress {
+    height: 14px;
+    border-radius: 20px;
+    background: #e9ecef;
+    overflow: hidden;
+}
+
+.wizard-progress .progress-bar {
+    background: #5d87ff;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.4s ease;
+}
+
+/* SIGNATURE */
+.signature-canvas {
+    width: 100%;
+    height: 150px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+
+.wizard-card {
+    border-radius: 10px;
+}
+
+@media(max-width:768px) {
+    .main-wrapper {
+        max-width: 100%;
+    }
+}
+
+/* Mobile readability tweaks */
+@media (max-width: 768px) {
+    .card-body.small {
+        font-size: 15px;
+        /* slightly larger on mobile */
+        line-height: 1.4;
+        padding: 1rem;
+    }
+
+    .wizard-card {
+        margin-bottom: 1rem;
+    }
+
+    /* ===== Responsive Typography ===== */
+
+    .field-label {
+        font-size: clamp(11px, 1.8vw, 13px);
+        color: #6c757d;
+        margin-bottom: 0.25rem;
+    }
+
+    .field-value {
+        font-size: clamp(13px, 2.5vw, 16px);
+        font-weight: 500;
+    }
+
+    .card-body.small {
+        font-size: clamp(13px, 2.2vw, 15px);
+    }
+
+    .signature-canvas {
+        height: 110px;
+        /* reduce signature height on small screens */
+    }
+
+    .wizard-progress .progress {
+        height: 12px;
+    }
+}

@@ -1,0 +1,76 @@
+/* HIDE STEP HEADER (TANPA !important) */
+.tab-wizard > .steps {
+    display: none;
+}
+
+.tab-wizard .content {
+    margin-top: 20px;
+}
+
+.tab-wizard .content > .title {
+    display: none;
+}
+
+
+/* PROGRESS */
+.wizard-progress .progress {
+    height: 14px;
+    border-radius: 20px;
+    background: #e9ecef;
+    overflow: hidden;
+}
+
+.wizard-progress .progress-bar {
+    background: #5d87ff;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.4s ease;
+}
+
+/* SIGNATURE */
+.signature-canvas {
+    width: 100%;
+    height: 150px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+
+/* BUTTON */
+.tab-wizard .actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+}
+
+.tab-wizard .actions ul {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+    padding: 0;
+}
+
+.tab-wizard .actions a {
+    padding: 8px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.tab-wizard .actions .disabled a {
+    background: #dcdcdc;
+    color: #888;
+    pointer-events: none;
+}
+
+.tab-wizard .actions li:not(.disabled) a {
+    background: #5d87ff;
+    color: white;
+}
+
+.tab-wizard .actions li:first-child:not(.disabled) a {
+    background: #bdbdbd;
+    color: white;
+}

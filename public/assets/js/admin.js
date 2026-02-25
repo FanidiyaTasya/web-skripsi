@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             jk: normalizeGender(pick(['jenis kelamin', 'jk', 'gender'])),
             usia_bln: pick(['usia', 'usia (bulan)', 'age']),
             berat_kg: pick(['berat badan (kg)', 'bb (kg)', 'bb', 'weight']),
-            tinggi_cm: pick(['tinggi badan (cm)', 'tb (kg)', 'tb', 'height']),
+            tinggi_cm: pick(['tinggi badan (cm)', 'tb (cm)', 'tb', 'height']),
             status_bb_tb: pick(['status gizi bb/tb', 'bb/tb'])
         };
     }
@@ -116,9 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // GENERATE FORM
     // =========================
     uploadBtn.onclick = async () => {
-
         try {
-
             parsedRows = await parseFile();
             if (!parsedRows.length) return alert('Data kosong');
 
@@ -164,17 +162,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // EXPORT PDF (GLOBAL)
     // =========================
     window.exportPdf = async function (formId) {
-
         const resp = await fetch(`/admin/form/${formId}`);
         const data = await resp.json();
-
         const rows = data.rows;
-
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-
         doc.text(`Laporan Validasi - ${formId}`, 14, 15);
-
         const body = rows.map((r, i) => [
             i + 1,
             r.child.child_nik,
@@ -241,53 +234,100 @@ document.addEventListener('DOMContentLoaded', () => {
             minute: '2-digit'
         });
     }
-    async function loadForms() {
 
+    async function loadForms() {
         const resp = await fetch('/admin/forms');
         const data = await resp.json();
-
         let html = `
-        <table class="table table-sm">
-            <tr>
-                <th>Tanggal</th>
-                <th>Form ID</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Aksi</th>
-            </tr>`;
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-primary text-center">
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Form ID</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+        `;
 
         data.forms.forEach(f => {
-
             let statusBadge = '';
-
             if (!f.validated_count || f.validated_count == 0) {
                 statusBadge = '<span class="badge bg-danger">Belum Divalidasi</span>';
             }
             else if (f.validated_count < f.records_count) {
-                statusBadge = '<span class="badge bg-warning text-dark">Sebagian</span>';
+                statusBadge = '<span class="badge bg-warning">Sebagian</span>';
             }
             else {
                 statusBadge = '<span class="badge bg-success">Selesai</span>';
             }
 
             html += `
-            <tr>
-                <td>${formatDateTime(f.created_at)}</td>
-                <td>${f.form_id}</td>
-                <td>${f.records_count}</td>
-                <td>${statusBadge}</td>
-                <td>
-                    <a href="/validator/${f.form_id}" target="_blank" class="btn btn-success btn-sm">Buka</a>
-                    <a href="/admin/${f.form_id}/preview" target="_blank" class="btn btn-outline-primary btn-sm">Preview</a>
-                    <button onclick="exportPdf('${f.form_id}')" class="btn btn-primary btn-sm">Export PDF</button>
-                    <button onclick="deleteForm('${f.form_id}')" class="btn btn-danger btn-sm">Hapus</button>
-                </td>
-            </tr>`;
+        <tr>
+            <td>${formatDateTime(f.created_at)}</td>
+            <td>${f.form_id}</td>
+            <td>${f.records_count}</td>
+            <td class="text-center">${statusBadge}</td>
+            <td class="text-center">
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+                    <button class="btn btn-outline-success btn-sm copy-link-btn" data-id="${f.form_id}">
+                        Salin Link
+                    </button>
+
+                    <a href="/admin/${f.form_id}/preview" target="_blank" class="btn btn-outline-primary btn-sm">
+                       Preview
+                    </a>
+
+                    <button onclick="exportPdf('${f.form_id}')" class="btn btn-outline-secondary btn-sm">
+                        PDF
+                    </button>
+
+                    <button onclick="deleteForm('${f.form_id}')" class="btn btn-outline-danger btn-sm">
+                        Hapus
+                    </button>
+                </div>
+            </td>
+        </tr>
+        `;
         });
 
-        html += '</table>';
+        html += `
+        </tbody>
+    </table>
+    </div>
+    `;
 
-        document.getElementById('formsList').innerHTML = html;
+    document.getElementById('formsList').innerHTML = html;
+
+    /* =========================
+        EVENT SALIN LINK
+        ========================= */
+    document.querySelectorAll('.copy-link-btn')
+        .forEach(btn => {
+            btn.addEventListener('click', () => {
+
+                const formId = btn.dataset.id;
+                const link = `${location.origin}/validator/${formId}`;
+
+                navigator.clipboard.writeText(link);
+
+                const originalText = btn.textContent;
+
+                btn.textContent = "Tersalin ✓";
+                btn.classList.remove('btn-outline-success');
+                btn.classList.add('btn-success');
+
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-success');
+                }, 1500);
+            });
+        });
     }
 
     loadForms();

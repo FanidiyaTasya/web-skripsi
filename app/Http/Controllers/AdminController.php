@@ -22,7 +22,7 @@ class AdminController extends Controller
     {
         $rows = $request->rows;
 
-        $formId = 'frm' . Str::random(8);
+        $formId = Str::random(10);
 
         Form::create([
             'form_id' => $formId,
@@ -96,13 +96,13 @@ class AdminController extends Controller
         ]);
     }
 
-    // public function preview($formId)
-    // {
-    //     return view('form-wizard', [
-    //         'formId' => $formId,
-    //         'readonly' => true
-    //     ]);
-    // }
+    public function preview($formId)
+    {
+        return view('pages.validator.form-wizard', [
+            'formId' => $formId,
+            'readonly' => true
+        ]);
+    }
 
     // =========================
 // DELETE FORM

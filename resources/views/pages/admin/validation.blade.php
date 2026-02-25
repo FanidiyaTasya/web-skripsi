@@ -12,33 +12,28 @@
         {{-- Upload Card --}}
         <div class="card shadow-sm mb-4">
             <div class="card-body">
-
                 <h6 class="fw-semibold mb-3">Upload File Excel</h6>
+                <div class="mb-3">
+                    <label class="form-label">Pilih File (.xlsx)</label>
 
-                <div class="row align-items-end">
+                    {{-- 🔥 ID WAJIB sama dengan JS --}}
+                    <input type="file" id="fileInput" class="form-control" accept=".xlsx,.xls,.csv">
 
-                    <div class="col-md-8">
-                        <label class="form-label">Pilih File (.xlsx)</label>
+                    <small class="text-muted">
+                        Sistem akan membaca kolom otomatis dari file Excel
+                    </small>
+                </div>
 
-                        {{-- 🔥 ID WAJIB sama dengan JS --}}
-                        <input type="file" id="fileInput" class="form-control" accept=".xlsx,.xls,.csv">
+                <div class="col-md-4 d-flex gap-2 mt-3 mt-md-0">
+                    {{-- Preview opsional --}}
+                    <button type="button" id="parseBtn" class="btn btn-outline-primary w-100">
+                        Preview
+                    </button>
 
-                        <small class="text-muted">
-                            Sistem akan membaca kolom otomatis dari file Excel
-                        </small>
-                    </div>
-                    
-                    <div class="col-md-4 d-flex gap-2 mt-3 mt-md-0">
-                        {{-- Preview opsional --}}
-                        <button type="button" id="parseBtn" class="btn btn-outline-primary w-100">
-                            Preview
-                        </button>
-
-                        {{-- Generate langsung bisa --}}
-                        <button type="button" id="uploadBtn" class="btn btn-success w-100" disabled>
-                            Generate Form
-                        </button>
-                    </div>
+                    {{-- Generate langsung bisa --}}
+                    <button type="button" id="uploadBtn" class="btn btn-success w-100" disabled>
+                        Generate Form
+                    </button>
                 </div>
 
                 {{-- link hasil --}}
@@ -47,7 +42,6 @@
             </div>
         </div>
 
-
         {{-- Preview --}}
         <div id="preview" class="mb-4"></div>
 
@@ -55,7 +49,7 @@
         {{-- List Form --}}
         <div class="card">
             <div class="card-body">
-                <h6>Daftar Form</h6>
+                <h6 class="fw-semibold mb-3">Daftar Form</h6>
                 <div id="formsList"></div>
             </div>
         </div>

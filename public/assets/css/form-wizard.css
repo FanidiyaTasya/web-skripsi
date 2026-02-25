@@ -13,20 +13,40 @@ body {
 
 /* PROGRESS */
 .wizard-progress .progress {
-    height: 14px;
+    height: 12px;
     border-radius: 20px;
-    background: #e9ecef;
+    background: #e5e7eb;
     overflow: hidden;
 }
 
 .wizard-progress .progress-bar {
-    background: #5d87ff;
-    font-size: 12px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: linear-gradient(90deg, #4f46e5, #3b82f6);
     transition: width 0.4s ease;
+}
+
+#progressText {
+    color: #4f46e5;
+}
+
+/* FIELD */
+.field-label {
+    font-size: 11px;
+    color: #8c9db5;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.field-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.badge {
+    font-weight: 500;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 12px;
 }
 
 /* SIGNATURE */
@@ -45,6 +65,43 @@ body {
     .main-wrapper {
         max-width: 100%;
     }
+}
+
+/* BUTTON ACTIONS */
+.wizard-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 28px;
+}
+
+.btn-prev,
+.btn-next {
+    min-width: 120px;
+    padding: 9px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.btn-prev {
+    background: #e7f0ff;
+    color: #5d87ff;
+    border: 1px solid #5d87ff;
+}
+
+.btn-prev:hover {
+    background: #d6e6ff;
+}
+
+.btn-next {
+    background: #5d87ff;
+    color: white;
+    border: none;
+}
+
+.btn-next:hover {
+    background: #4e73df;
+    color: white;
 }
 
 /* Mobile readability tweaks */

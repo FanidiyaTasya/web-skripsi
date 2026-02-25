@@ -1,21 +1,21 @@
 @extends('layouts.validator')
 
 @section('content.validator')
-    <h5 class="fw-bold mb-3">Validasi Data Balita</h5>
-
+    <h4 class="fw-bold mb-3">VALIDASI DATA GIZI BALITA</h4>
+    <hr class="my-3">
     <!-- PROGRESS BAR -->
-    <div class="wizard-progress mb-4">
+    <div class="wizard-progress mb-3">
         <div class="progress">
-            <div class="progress-bar" id="progressBar" style="width: 50%;">
-                <span id="progressText" class="ms-auto me-2 small"></span>
+            <div id="progressBar" class="progress-bar" style="width:0%">
             </div>
         </div>
+        <div class="text-end small mt-2 fw-semibold" id="progressText"></div>
     </div>
 
     <div id="wizardContainer"></div>
 
-    <div class="d-flex justify-content-between mt-4">
-        <button id="prevBtn" class="btn btn-secondary">Previous</button>
-        <button id="nextBtn" class="btn btn-success">Next</button>
+    <div class="wizard-actions">
+        <button id="prevBtn" class="btn btn-prev">Previous</button>
+        <button id="nextBtn" class="btn btn-next">Next</button>
     </div>
 @endsection

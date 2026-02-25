@@ -104,25 +104,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         wizardContainer.innerHTML = `
         <div class="row">
-            <div class="col-md-6 mb-3">
+            <div class="col-12 mb-3">
                 <label class="form-label">Nama Validator</label>
                 <input id="validatorName" class="form-control" value="${meta.name || ''}">
             </div>
 
-            <div class="col-md-6 mb-3">
+            <div class="col-12 mb-3">
                 <label class="form-label">Jabatan</label>
                 <input id="validatorRole" class="form-control" value="${meta.role || ''}">
             </div>
 
-            <div class="col-12 mb-3">
-                <label class="form-label">Tanda Tangan</label>
-                <canvas id="sigPad" class="signature-canvas"></canvas>
-                <button type="button" id="clearSig" class="btn btn-sm btn-secondary mt-2">
-                    Clear
-                </button>
             </div>
-        </div>
-        `;
+            `;
+
+    //         // TODO: TTD masih optional
+    //         // <div class="col-12 mb-3">
+    //         //     <label class="form-label">Tanda Tangan</label>
+    //         //     <canvas id="sigPad" class="signature-canvas"></canvas>
+    //         //     <button type="button" id="clearSig" class="btn btn-sm btn-secondary mt-2">
+    //         //         Clear
+    //         //     </button>
+    //         // </div>
 
         const canvas = document.getElementById('sigPad');
         signaturePad = new SignaturePad(canvas);
@@ -145,118 +147,239 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     /* ================= VALIDATION STEP ================= */
+    // function renderValidationStep() {
+
+    //     let start = (currentStep - 1) * itemsPerStep;
+    //     let end = start + itemsPerStep;
+    //     let slice = rows.slice(start, end);
+
+    //     slice.forEach((r, idx) => {
+
+    //         const globalIndex = start + idx;
+
+    //         const checkedValid =
+    //             r.validation?.status === 'valid' ? 'checked' : '';
+    //         const checkedInvalid =
+    //             r.validation?.status === 'invalid' ? 'checked' : '';
+
+    //         wizardContainer.innerHTML += `
+    //             <div class="card shadow-sm wizard-card mb-3"
+    //                  data-index="${globalIndex}"
+    //                  data-id="${r.id}">
+
+    //                 <div class="card-body small">
+
+    //                     <div class="row g-3">
+
+    //                         <div class="col-md-6">
+    //                             <div class="field-label">Posyandu</div>
+    //                             <div class="field-value">${r.child.posyandu ?? '-'}</div>
+    //                         </div>
+
+    //                         <div class="col-md-6">
+    //                             <div class="field-label">Tahun</div>
+    //                             <div class="field-value">${r.year ?? '-'}</div>
+    //                         </div>
+
+    //                         <div class="col-md-6">
+    //                             <div class="field-label">Bulan</div>
+    //                             <div class="field-value">${r.month ?? '-'}</div>
+    //                         </div>
+
+    //                         <div class="col-md-6">
+    //                             <div class="field-label">ID Balita</div>
+    //                             <div class="field-value">${r.child.child_nik}</div>
+    //                         </div>
+
+    //                         <div class="col-md-6">
+    //                             <div class="field-label">Nama</div>
+    //                             <div class="field-value">${r.child.name ?? '-'}</div>
+    //                         </div>
+
+    //                         <div class="col-md-6">
+    //                             <div class="field-label">Usia (bln)</div>
+    //                             <div class="field-value">${r.age_months}</div>
+    //                         </div>
+
+    //                         <div class="col-md-6">
+    //                             <div class="field-label">Jenis Kelamin</div>
+    //                             <div class="field-value">
+    //                                 ${r.child.gender == 1 ? 'Laki-laki' : 'Perempuan'}
+    //                             </div>
+    //                         </div>
+
+    //                         <div class="col-md-6">
+    //                             <div class="field-label">Status Gizi BB/TB</div>
+    //                             <div class="field-value text-primary fw-semibold">
+    //                                 ${r.nutrition_status ?? '-'}
+    //                             </div>
+    //                         </div>
+
+    //                         <div class="col-md-6">
+    //                             <div class="field-label">Berat (kg)</div>
+    //                             <div class="field-value">${r.weight}</div>
+    //                         </div>
+
+    //                         <div class="col-md-6">
+    //                             <div class="field-label">Tinggi (cm)</div>
+    //                             <div class="field-value">${r.height}</div>
+    //                         </div>
+
+    //                     </div>
+
+    //                     <hr class="my-4">
+
+    //                     <div>
+    //                         <label class="form-label fw-semibold">Validasi</label>
+
+    //                         <div class="d-flex gap-4 mt-2">
+    //                             <div class="form-check">
+    //                                 <input class="form-check-input"
+    //                                        type="radio"
+    //                                        name="valid-${globalIndex}"
+    //                                        value="valid"
+    //                                        ${checkedValid}>
+    //                                 <label class="form-check-label">Valid</label>
+    //                             </div>
+
+    //                             <div class="form-check">
+    //                                 <input class="form-check-input"
+    //                                        type="radio"
+    //                                        name="valid-${globalIndex}"
+    //                                        value="invalid"
+    //                                        ${checkedInvalid}>
+    //                                 <label class="form-check-label">Tidak Valid</label>
+    //                             </div>
+    //                         </div>
+    //                     </div>
+
+    //                 </div>
+    //             </div>
+    //         `;
+    //     });
+    // }
 
     function renderValidationStep() {
 
-        let start = (currentStep - 1) * itemsPerStep;
-        let end = start + itemsPerStep;
-        let slice = rows.slice(start, end);
+    let start = (currentStep - 1) * itemsPerStep;
+    let end = start + itemsPerStep;
+    let slice = rows.slice(start, end);
 
-        slice.forEach((r, idx) => {
+    slice.forEach((r, idx) => {
 
-            const globalIndex = start + idx;
+        const globalIndex = start + idx;
 
-            const checkedValid =
-                r.validation?.status === 'valid' ? 'checked' : '';
-            const checkedInvalid =
-                r.validation?.status === 'invalid' ? 'checked' : '';
+        const checkedValid =
+            r.validation?.status === 'valid' ? 'checked' : '';
+        const checkedInvalid =
+            r.validation?.status === 'invalid' ? 'checked' : '';
 
-            wizardContainer.innerHTML += `
-                <div class="card shadow-sm wizard-card mb-3"
-                     data-index="${globalIndex}"
-                     data-id="${r.id}">
+        wizardContainer.innerHTML += `
+            <div class="card shadow-sm wizard-card mb-3"
+                 data-index="${globalIndex}"
+                 data-id="${r.id}">
 
-                    <div class="card-body small">
+                <div class="card-body small">
 
-                        <div class="row g-3">
+                    <!-- HEADER MINI -->
+                    <div class="mb-3">
+                        <div class="fw-bold fs-6">
+                            ${r.child.name ?? '-'}
+                        </div>
+                        <div class="text-muted small">
+                            ID: ${r.child.child_nik}
+                        </div>
+                    </div>
 
-                            <div class="col-md-6">
-                                <div class="field-label">Posyandu</div>
-                                <div class="field-value">${r.child.posyandu ?? '-'}</div>
-                            </div>
+                    <!-- DATA GRID -->
+                    <div class="row g-3">
 
-                            <div class="col-md-6">
-                                <div class="field-label">Tahun</div>
-                                <div class="field-value">${r.year ?? '-'}</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="field-label">Bulan</div>
-                                <div class="field-value">${r.month ?? '-'}</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="field-label">ID Balita</div>
-                                <div class="field-value">${r.child.child_nik}</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="field-label">Nama</div>
-                                <div class="field-value">${r.child.name ?? '-'}</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="field-label">Usia (bln)</div>
-                                <div class="field-value">${r.age_months}</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="field-label">Jenis Kelamin</div>
-                                <div class="field-value">
-                                    ${r.child.gender == 1 ? 'Laki-laki' : 'Perempuan'}
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="field-label">Status Gizi BB/TB</div>
-                                <div class="field-value text-primary fw-semibold">
-                                    ${r.nutrition_status ?? '-'}
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="field-label">Berat (kg)</div>
-                                <div class="field-value">${r.weight}</div>
-                            </div>
-
-                            <div class="col-md-6">
-                                <div class="field-label">Tinggi (cm)</div>
-                                <div class="field-value">${r.height}</div>
-                            </div>
-
+                        <div class="col-6">
+                            <div class="field-label">Posyandu</div>
+                            <div class="field-value">${r.child.posyandu ?? '-'}</div>
                         </div>
 
-                        <hr class="my-4">
+                        <div class="col-6">
+                            <div class="field-label">Tahun</div>
+                            <div class="field-value">${r.year ?? '-'}</div>
+                        </div>
 
-                        <div>
-                            <label class="form-label fw-semibold">Validasi</label>
+                        <div class="col-6">
+                            <div class="field-label">Bulan</div>
+                            <div class="field-value">${r.month ?? '-'}</div>
+                        </div>
 
-                            <div class="d-flex gap-4 mt-2">
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="radio"
-                                           name="valid-${globalIndex}"
-                                           value="valid"
-                                           ${checkedValid}>
-                                    <label class="form-check-label">Valid</label>
-                                </div>
+                        <div class="col-6">
+                            <div class="field-label">Usia</div>
+                            <div class="field-value">${r.age_months} bln</div>
+                        </div>
 
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="radio"
-                                           name="valid-${globalIndex}"
-                                           value="invalid"
-                                           ${checkedInvalid}>
-                                    <label class="form-check-label">Tidak Valid</label>
-                                </div>
+                        <div class="col-6">
+                            <div class="field-label">Jenis Kelamin</div>
+                            <div class="field-value">
+                                ${r.child.gender == 1 ? 'Laki-laki' : 'Perempuan'}
                             </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="field-label">Status Gizi</div>
+                            <div class="field-value fw-bold text-primary">
+                                ${r.nutrition_status ?? '-'}
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="field-label">Berat</div>
+                            <div class="field-value">${r.weight} kg</div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="field-label">Tinggi</div>
+                            <div class="field-value">${r.height} cm</div>
                         </div>
 
                     </div>
+
+                    <hr class="my-3">
+
+                    <!-- VALIDASI -->
+                    <div>
+                        <div class="fw-semibold mb-2">Validasi</div>
+
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       id="valid-${globalIndex}"
+                                       name="valid-${globalIndex}"
+                                       value="valid"
+                                       ${checkedValid}>
+                                <label class="form-check-label"
+                                       for="valid-${globalIndex}">
+                                       Valid
+                                </label>
+                            </div>
+
+                            <div class="form-check">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       id="invalid-${globalIndex}"
+                                       name="valid-${globalIndex}"
+                                       value="invalid"
+                                       ${checkedInvalid}>
+                                <label class="form-check-label"
+                                       for="invalid-${globalIndex}">
+                                       Tidak Valid
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-            `;
-        });
-    }
+            </div>
+        `;
+    });
+}
 
     /* ================= SAVE ================= */
 
@@ -310,10 +433,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            if (signaturePad.isEmpty()) {
-                alert("Tanda tangan wajib diisi");
-                return;
-            }
+            // if (signaturePad.isEmpty()) {
+            //     alert("Tanda tangan wajib diisi");
+            //     return;
+            // }
 
             await fetch('/validator/save', {
                 method: 'POST',
@@ -326,7 +449,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     formId: FORM_ID,
                     name: name,
                     role: role,
-                    signature: signaturePad.toDataURL(),
+                    // signature: signaturePad.toDataURL(),
                     rows: []
                 })
             });

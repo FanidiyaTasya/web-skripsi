@@ -14,11 +14,12 @@ Route::prefix('admin')->group(function () {
     Route::get('/forms', [AdminController::class, 'listForms']);
     Route::get('/form/{id}', [AdminController::class, 'getForm']);
     Route::delete('/forms/{id}', [AdminController::class, 'delete']);
-    // Route::get('/{formId}/preview', [AdminController::class, 'preview']); // preview setelah validator submit
+    Route::get('/{formId}/preview', [AdminController::class, 'preview']); // preview setelah validator submit
 
 });
 
 Route::get('/validator/{formId}', [ValidatorController::class, 'show']);
 Route::get('/validator/{formId}/data', [ValidatorController::class, 'data']);
 Route::post('/validator/save', [ValidatorController::class, 'save']);
+Route::get('/validator/{formId}/success', [ValidatorController::class, 'success']);
 

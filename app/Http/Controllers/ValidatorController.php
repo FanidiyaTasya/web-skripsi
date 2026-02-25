@@ -49,9 +49,7 @@ class ValidatorController extends Controller
 
             /* ================= SIMPAN VALIDASI PER BARIS ================= */
             if (!empty($request->rows)) {
-
                 foreach ($request->rows as $row) {
-
                     Validation::updateOrCreate(
                         [
                             'form_id' => $formId,
@@ -68,5 +66,10 @@ class ValidatorController extends Controller
         } catch (\Exception $e) {
             return response($e->getMessage(), 500);
         }
+    }
+
+    public function success($formId)
+    {
+        return view('pages.validator.confirmation', compact('formId'));
     }
 }

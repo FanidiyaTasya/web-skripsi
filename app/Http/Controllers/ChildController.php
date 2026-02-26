@@ -10,8 +10,18 @@ class ChildController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(){
-        return view('index');
+    public function index(Request $request)
+    {
+        $query = Child::query();
+
+        if ($request->search) {
+            $query->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('child_nik', 'like', '%' . $request->search . '%');
+        }
+
+        $children = $query->latest()->paginate(10);
+
+        return view('pages.admin.balita', compact('children'));
     }
 
     /**

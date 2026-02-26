@@ -108,16 +108,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
 
             </div>
+            <--  <div class="col-12 mb-3">
+                  <label class="form-label">Tanda Tangan</label>
+                  <canvas id="sigPad" class="signature-canvas"></canvas>
+                  <button type="button" id="clearSig" class="btn btn-sm btn-secondary mt-2">
+                      Clear
+                  </button>
+              </div> -->
             `;
-
-        //         // TODO: TTD masih optional
-        //         // <div class="col-12 mb-3">
-        //         //     <label class="form-label">Tanda Tangan</label>
-        //         //     <canvas id="sigPad" class="signature-canvas"></canvas>
-        //         //     <button type="button" id="clearSig" class="btn btn-sm btn-secondary mt-2">
-        //         //         Clear
-        //         //     </button>
-        //         // </div>
 
         const canvas = document.getElementById('sigPad');
         signaturePad = new SignaturePad(canvas);

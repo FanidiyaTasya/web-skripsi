@@ -2,13 +2,14 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthenticatedSessionController;
+use App\Http\Controllers\ChildController;
 use App\Http\Controllers\ValidatorController;
 use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+    Route::get('/', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/', [AuthenticatedSessionController::class, 'store']);
 });
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
@@ -20,15 +21,16 @@ Route::middleware('auth')->group(function () {
         return view('pages.index');
     })->name('dashboard');
 
-    Route::prefix('admin')->group(function () {
-        Route::get('/children', [AdminController::class, 'index'])->name('children.index');
+    Route::get('/children', [ChildController::class, 'index'])->name('children.index');
 
-        Route::get('/validation', [AdminController::class, 'index'])->name('admin.index');
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/validation', [AdminController::class, 'index'])->name('validation.index');
         Route::post('/upload', [AdminController::class, 'upload']);
         Route::get('/forms', [AdminController::class, 'listForms']);
         Route::get('/form/{id}', [AdminController::class, 'getForm']);
         Route::delete('/forms/{id}', [AdminController::class, 'delete']);
-        Route::get('/{formId}/preview', [AdminController::class, 'preview']);
+        Route::get('/{formId}/preview', [AdminController::class, 'preview'])->name('preview');
+        Route::get('/{formId}/summary', [AdminController::class, 'summary'])->name('summary');
     });
 });
 

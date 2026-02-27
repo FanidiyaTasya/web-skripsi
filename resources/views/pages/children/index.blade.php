@@ -10,9 +10,9 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="fw-semibold mb-0">Data Balita</h5>
 
-                <a href="{{ route('children.create') }}" class="btn btn-primary">
+                {{-- <a href="{{ route('children.create') }}" class="btn btn-primary">
                     <i class="ti ti-plus"></i> Tambah Balita
-                </a>
+                </a> --}}
             </div>
 
             {{-- SEARCH --}}
@@ -72,7 +72,7 @@
 
                                 <td class="text-center">
 
-                                    <a href="{{ route('children.show', $c->id) }}"
+                                    {{-- <a href="{{ route('children.show', $c->id) }}"
                                        class="btn btn-info btn-sm">
                                         Detail
                                     </a>
@@ -92,7 +92,7 @@
                                                 onclick="return confirm('Hapus data balita?')">
                                             Hapus
                                         </button>
-                                    </form>
+                                    </form> --}}
 
                                 </td>
                             </tr>

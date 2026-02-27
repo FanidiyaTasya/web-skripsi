@@ -18,7 +18,8 @@
                         <span class="hide-menu">Home</span>
                     </li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{ route('dashboard') }}" aria-expanded="false">
+                        <a class="sidebar-link {{ request()->routeIs('dashboard.*') ? 'active' : '' }}"
+                            href="{{ route('dashboard') }}" aria-expanded="false">
                             <span>
                                 <i class="ti ti-layout-dashboard"></i>
                             </span>
@@ -26,7 +27,8 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{ route('children.index') }}" aria-expanded="false">
+                        <a class="sidebar-link {{ request()->routeIs('children.*') ? 'active' : '' }}"
+                            href="{{ route('children.index') }}" aria-expanded="false">
                             <span>
                                 <i class="ti ti-baby-carriage"></i>
                             </span>
@@ -35,7 +37,8 @@
                     </li>
 
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="{{ route('admin.index') }}" aria-expanded="false">
+                        <a class="sidebar-link {{ request()->routeIs('admin.*') ? 'active' : '' }}"
+                            href="{{ route('admin.validation.index') }}" aria-expanded="false">
                             <span>
                                 <i class="ti ti-user-check"></i>
                             </span>

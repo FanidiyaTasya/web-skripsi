@@ -21,7 +21,7 @@ class ChildController extends Controller
 
         $children = $query->latest()->paginate(10);
 
-        return view('pages.admin.balita', compact('children'));
+        return view('pages.children.index', compact('children'));
     }
 
     /**

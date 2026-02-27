@@ -104,6 +104,17 @@ body {
     color: white;
 }
 
+/* VALIDATION ERROR STATE */
+.wizard-card {
+    border: 1px solid #dee2e6;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wizard-card.error {
+    border: 2px solid #dc3545 !important;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
 /* Mobile readability tweaks */
 @media (max-width: 768px) {
     .card-body.small {

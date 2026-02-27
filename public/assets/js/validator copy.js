@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const wizardContainer = document.getElementById('wizardContainer');
     const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
 
@@ -13,46 +14,51 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentStep = 0;
     let itemsPerStep;
     let totalSteps;
-    let signaturePad;
 
-    /* ================= RESPONSIVE SETUP ================= */
-
+    /* ================= RESPONSIVE ================= */
     function updateLayoutSettings() {
-        const width = window.innerWidth;
-        console.log("Current width:", width);
-
-        itemsPerStep = width <= 768 ? 1 : 5;
+        itemsPerStep = window.innerWidth <= 768 ? 1 : 5;
         totalSteps = Math.ceil(rows.length / itemsPerStep) + 1;
-
-        console.log("Items per step:", itemsPerStep);
     }
 
     updateLayoutSettings();
 
     window.addEventListener('resize', () => {
-        const oldItems = itemsPerStep;
+        const old = itemsPerStep;
         updateLayoutSettings();
-
-        if (oldItems !== itemsPerStep) {
-            currentStep = 0;
+        if (old !== itemsPerStep) {
             renderStep();
         }
     });
 
-    /* ================= PROGRESS ================= */
-    function calculateProgress() {
-        return Math.round((currentStep / (totalSteps - 1)) * 100);
+    /* ================= AUTO RESUME ================= */
+    const identityFilled = meta.name && meta.role;
+    if (!identityFilled) {
+        currentStep = 0;
+    } else {
+        const firstUnvalidated = rows.findIndex(r => !r.validation || !r.validation.status);
+        if (firstUnvalidated === -1) {
+            currentStep = totalSteps - 1;
+        } else {
+            currentStep = Math.floor(firstUnvalidated / itemsPerStep) + 1;
+        }
+    }
+
+    /* ================= PROGRESS REAL-TIME ================= */
+    function updateProgressBar() {
+        const validated = rows.filter(r => r.validation && r.validation.status).length;
+        const total = rows.length;
+        const percent = total === 0 ? 0 : Math.round((validated / total) * 100);
+
+        progressBar.style.width = percent + "%";
+        progressText.textContent = percent + "%";
     }
 
     /* ================= RENDER ================= */
     function renderStep() {
-
         wizardContainer.innerHTML = '';
-
-        let progress = calculateProgress();
-        progressBar.style.width = progress + "%";
-        document.getElementById('progressText').textContent = progress + "%";
-
+        updateProgressBar();
+        
         prevBtn.disabled = currentStep === 0;
         nextBtn.textContent =
             currentStep === totalSteps - 1 ? "Selesai" : "Next";
@@ -62,39 +68,36 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             renderValidationStep();
         }
+
+        // 🔥 AUTO SCROLL KE ATAS
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
     }
 
     /* =============== VALIDATION FUNCTION =============== */
     function validateCurrentStep() {
         let isValid = true;
-
         document.querySelectorAll('.wizard-card')
             .forEach(card => {
-
                 const index = card.dataset.index;
-
                 const checked =
                     card.querySelector(
                         `input[name="valid-${index}"]:checked`
                     );
-
-                // reset border dulu
                 card.style.border = "1px solid #dee2e6";
 
                 if (!checked) {
                     isValid = false;
-
-                    // kasih highlight merah
                     card.style.border = "2px solid #dc3545";
                 }
             });
-
         return isValid;
     }
 
     /* ================= STEP 0 ================= */
     function renderIdentityStep() {
-
         wizardContainer.innerHTML = `
         <div class="row">
             <div class="col-12 mb-3">
@@ -106,40 +109,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <label class="form-label">Jabatan</label>
                 <input id="validatorRole" class="form-control" value="${meta.role || ''}">
             </div>
-
-            </div>
-            <--  <div class="col-12 mb-3">
-                  <label class="form-label">Tanda Tangan</label>
-                  <canvas id="sigPad" class="signature-canvas"></canvas>
-                  <button type="button" id="clearSig" class="btn btn-sm btn-secondary mt-2">
-                      Clear
-                  </button>
-              </div> -->
-            `;
-
-        const canvas = document.getElementById('sigPad');
-        signaturePad = new SignaturePad(canvas);
-
-        function resizeCanvas() {
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
-            canvas.width = canvas.offsetWidth * ratio;
-            canvas.height = 120 * ratio;
-            canvas.getContext("2d").scale(ratio, ratio);
-        }
-
-        resizeCanvas();
-
-        if (meta.signature) {
-            signaturePad.fromDataURL(meta.signature);
-        }
-
-        document.getElementById('clearSig').onclick =
-            () => signaturePad.clear();
+        </div>
+        `;
     }
 
     function formatStatusGizi(status) {
         if (!status) return '-';
-
         const map = {
             'Gz.Brk': 'Gizi Buruk',
             'Gz.Krg': 'Gizi Kurang',
@@ -148,7 +123,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             'R.Gz.Lbh': 'Risiko Gizi Lebih',
             'Obesitas': 'Obesitas'
         };
-
         return map[status] ?? status;
     }
 
@@ -175,13 +149,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <div class="card-body small">
                     <!-- ================= HEADER ================= -->
                         <div class="d-flex justify-content-between align-items-start mb-3">
-
                             <!-- LEFT SIDE -->
                             <div>
                                 <div class="fw-bold fs-5">
                                     ${r.child.name ?? '-'}
                                 </div>
-
                                 <div class="text-muted small">
                                     ${r.child.child_nik ?? '-'}
                                 </div>
@@ -190,15 +162,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                             <!-- RIGHT SIDE BADGES -->
                             <div class="text-end">
                                 <div class="d-flex flex-column gap-1 align-items-end">
-
                                     <span class="badge bg-light text-dark">
                                         ${r.child.posyandu ?? '-'}
                                     </span>
-
                                     <span class="badge bg-light text-dark">
                                         ${r.month ?? '-'} ${r.year ?? '-'}
                                     </span>
-
                                 </div>
                             </div>
 
@@ -206,7 +175,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     <!-- ================= DATA GRID ================= -->
                     <div class="row g-3">
-
                         <div class="col-6">
                             <div class="field-label">Usia</div>
                             <div class="field-value">
@@ -249,9 +217,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <!-- ================= VALIDASI ================= -->
                     <div>
                         <div class="fw-semibold mb-2">Validasi</div>
-
                         <div class="d-flex gap-3">
-
                             <div class="form-check">
                                 <input class="form-check-input"
                                        type="radio"
@@ -277,27 +243,37 @@ document.addEventListener('DOMContentLoaded', async () => {
                                        Tidak Valid
                                 </label>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </div>
         `;
         });
+
+        /* 🔥 REAL-TIME PROGRESS UPDATE */
+        document.querySelectorAll('.form-check-input').forEach(input => {
+            input.addEventListener('change', function () {
+
+                const card = this.closest('.wizard-card');
+                const dataId = card.dataset.id;
+
+                const row = rows.find(r => r.id == dataId);
+                if (row) {
+                    row.validation = { status: this.value };
+                }
+
+                updateProgressBar();
+            });
+        });
     }
 
     /* ================= SAVE ================= */
-
     async function saveValidationStep() {
-
         const responses = [];
-
         document.querySelectorAll('.wizard-card')
             .forEach(card => {
 
                 const index = card.dataset.index;
-
                 const checked =
                     card.querySelector(
                         `input[name="valid-${index}"]:checked`
@@ -339,11 +315,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            // if (signaturePad.isEmpty()) {
-            //     alert("Tanda tangan wajib diisi");
-            //     return;
-            // }
-
             await fetch('/validator/save', {
                 method: 'POST',
                 headers: {
@@ -355,7 +326,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     formId: FORM_ID,
                     name: name,
                     role: role,
-                    // signature: signaturePad.toDataURL(),
                     rows: []
                 })
             });
@@ -377,7 +347,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             currentStep++;
             renderStep();
         } else {
-            alert("Validasi selesai 🎉");
+            window.location.href = `/validator/${FORM_ID}/success`;
         }
     };
 

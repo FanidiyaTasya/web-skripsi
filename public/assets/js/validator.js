@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const wizardContainer = document.getElementById('wizardContainer');
     const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
 
@@ -14,65 +15,65 @@ document.addEventListener('DOMContentLoaded', async () => {
     let itemsPerStep;
     let totalSteps;
 
-    /* ================= RESPONSIVE SETUP ================= */
-
+    /* ================= RESPONSIVE ================= */
     function updateLayoutSettings() {
-        const width = window.innerWidth;
-        console.log("Current width:", width);
-
-        itemsPerStep = width <= 768 ? 1 : 5;
+        itemsPerStep = window.innerWidth <= 768 ? 1 : 5;
         totalSteps = Math.ceil(rows.length / itemsPerStep) + 1;
-
-        console.log("Items per step:", itemsPerStep);
     }
 
     updateLayoutSettings();
 
-    /* ================= AUTO RESUME ================= */
-    // Cari index pertama yang belum divalidasi
-    let firstUnvalidatedIndex = rows.findIndex(r => !r.validation);
-
-    // Kalau semua sudah divalidasi
-    if (firstUnvalidatedIndex === -1) {
-        currentStep = totalSteps - 1;
-    } else {
-        // Hitung step berdasarkan itemsPerStep
-        currentStep = Math.floor(firstUnvalidatedIndex / itemsPerStep) + 1;
-    }
-
-    // Kalau belum ada validasi sama sekali
-    if (rows.every(r => !r.validation)) {
-        currentStep = 1;
-    }
-
     window.addEventListener('resize', () => {
-        const oldItems = itemsPerStep;
+        const old = itemsPerStep;
         updateLayoutSettings();
-        if (oldItems !== itemsPerStep) {
-            // Hitung ulang step berdasarkan progress yang sudah ada
-            let firstUnvalidatedIndex = rows.findIndex(r => !r.validation);
-
-            if (firstUnvalidatedIndex === -1) {
-                currentStep = totalSteps - 1;
-            } else {
-                currentStep = Math.floor(firstUnvalidatedIndex / itemsPerStep) + 1;
-            }
+        if (old !== itemsPerStep) {
             renderStep();
         }
     });
 
-    /* ================= PROGRESS ================= */
-    function calculateProgress() {
-        const validatedCount = rows.filter(r => r.validation).length;
-        return Math.round((validatedCount / rows.length) * 100);
+    /* ================= AUTO RESUME ================= */
+    const identityFilled = meta.name && meta.role;
+    if (!identityFilled) {
+        currentStep = 0;
+    } else {
+        const firstUnvalidated = rows.findIndex(r => !r.validation || !r.validation.status);
+        if (firstUnvalidated === -1) {
+            currentStep = totalSteps - 1;
+        } else {
+            currentStep = Math.floor(firstUnvalidated / itemsPerStep) + 1;
+        }
+    }
+
+    /* ================= PROGRESS REAL-TIME ================= */
+    function updateProgressBar() {
+        const validated = rows.filter(r =>
+            r.validation &&
+            (r.validation.status === 'valid' || r.validation.status === 'invalid')
+        ).length;
+
+        const total = rows.length;
+        if (total === 0) {
+            progressBar.style.width = "0%";
+            progressText.textContent = "0%";
+            return;
+        }
+
+        const percentRaw = (validated / total) * 100;
+        let percent;
+        if (validated === 0) {
+            percent = 0; // benar-benar belum isi apa pun
+        } else {
+            percent = Math.max(1, Math.round(percentRaw));
+        }
+
+        progressBar.style.width = percent + "%";
+        progressText.textContent = percent + "%";
     }
 
     /* ================= RENDER ================= */
     function renderStep() {
         wizardContainer.innerHTML = '';
-        let progress = calculateProgress();
-        progressBar.style.width = progress + "%";
-        document.getElementById('progressText').textContent = progress + "%";
+        updateProgressBar();
 
         prevBtn.disabled = currentStep === 0;
         nextBtn.textContent =
@@ -83,6 +84,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         } else {
             renderValidationStep();
         }
+
+        // 🔥 AUTO SCROLL KE ATAS
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
     }
 
     /* =============== VALIDATION FUNCTION =============== */
@@ -95,11 +102,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     card.querySelector(
                         `input[name="valid-${index}"]:checked`
                     );
-                card.style.border = "1px solid #dee2e6";
+                // reset dulu
+                card.classList.remove('error');
 
                 if (!checked) {
                     isValid = false;
-                    card.style.border = "2px solid #dc3545";
+                    card.classList.add('error');
                 }
             });
         return isValid;
@@ -118,8 +126,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <label class="form-label">Jabatan</label>
                 <input id="validatorRole" class="form-control" value="${meta.role || ''}">
             </div>
-
-            </div>
+        </div>
         `;
     }
 
@@ -138,7 +145,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     /* ================= VALIDATION STEP ================= */
     function renderValidationStep() {
-
         let start = (currentStep - 1) * itemsPerStep;
         let end = start + itemsPerStep;
         let slice = rows.slice(start, end);
@@ -260,10 +266,25 @@ document.addEventListener('DOMContentLoaded', async () => {
             </div>
         `;
         });
+
+        /* 🔥 REAL-TIME PROGRESS UPDATE */
+        document.querySelectorAll('.form-check-input').forEach(input => {
+            input.addEventListener('change', function () {
+                const card = this.closest('.wizard-card');
+                // 🔥 HAPUS ERROR SAAT SUDAH DIPILIH
+                card.classList.remove('error');
+
+                const dataId = card.dataset.id;
+                const row = rows.find(r => r.id == dataId);
+                if (row) {
+                    row.validation = { status: this.value };
+                }
+                updateProgressBar();
+            });
+        });
     }
 
     /* ================= SAVE ================= */
-
     async function saveValidationStep() {
         const responses = [];
         document.querySelectorAll('.wizard-card')

@@ -26,6 +26,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return null;
     }
 
+    function formatDecimal(value) {
+        if (value === null || value === undefined || value === '') return null;
+        // Support format 11,9 atau 11.9
+        const cleaned = String(value).replace(',', '.');
+        const number = parseFloat(cleaned);
+
+        if (isNaN(number)) return null;
+        // 🔥 Bulatkan 1 angka desimal
+        return Number(number.toFixed(1));
+    }
+
     function mapField(row) {
 
         const lookup = {};
@@ -49,8 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
             nama: pick(['nama', 'name']),
             jk: normalizeGender(pick(['jenis kelamin', 'jk', 'gender'])),
             usia_bln: pick(['usia', 'usia (bulan)', 'age']),
-            berat_kg: pick(['berat badan (kg)', 'bb (kg)', 'bb', 'weight']),
-            tinggi_cm: pick(['tinggi badan (cm)', 'tb (cm)', 'tb', 'height']),
+            berat_kg: formatDecimal(pick(['berat badan (kg)', 'bb (kg)', 'bb', 'weight'])),
+            tinggi_cm: formatDecimal(pick(['tinggi badan (cm)', 'tb (cm)', 'tb', 'height'])),
             status_bb_tb: pick(['status gizi bb/tb', 'bb/tb'])
         };
     }
@@ -286,6 +297,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         PDF
                     </button>
 
+                    <a href="/admin/${f.form_id}/summary" class="btn btn-outline-info btn-sm">
+                        Summary
+                    </a>
+
                     <button onclick="deleteForm('${f.form_id}')" class="btn btn-outline-danger btn-sm">
                         Hapus
                     </button>
@@ -301,33 +316,33 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
     `;
 
-    document.getElementById('formsList').innerHTML = html;
+        document.getElementById('formsList').innerHTML = html;
 
-    /* =========================
-        EVENT SALIN LINK
-        ========================= */
-    document.querySelectorAll('.copy-link-btn')
-        .forEach(btn => {
-            btn.addEventListener('click', () => {
+        /* =========================
+            EVENT SALIN LINK
+            ========================= */
+        document.querySelectorAll('.copy-link-btn')
+            .forEach(btn => {
+                btn.addEventListener('click', () => {
 
-                const formId = btn.dataset.id;
-                const link = `${location.origin}/validator/${formId}`;
+                    const formId = btn.dataset.id;
+                    const link = `${location.origin}/validator/${formId}`;
 
-                navigator.clipboard.writeText(link);
+                    navigator.clipboard.writeText(link);
 
-                const originalText = btn.textContent;
+                    const originalText = btn.textContent;
 
-                btn.textContent = "Tersalin ✓";
-                btn.classList.remove('btn-outline-success');
-                btn.classList.add('btn-success');
+                    btn.textContent = "Tersalin ✓";
+                    btn.classList.remove('btn-outline-success');
+                    btn.classList.add('btn-success');
 
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.classList.remove('btn-success');
-                    btn.classList.add('btn-outline-success');
-                }, 1500);
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.classList.remove('btn-success');
+                        btn.classList.add('btn-outline-success');
+                    }, 1500);
+                });
             });
-        });
     }
 
     loadForms();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Validation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\Form;
@@ -67,7 +68,7 @@ class AdminController extends Controller
             ->latest()
             ->get()
             ->map(function ($form) {
-                $validatedCount = \App\Models\Validation::where('form_id', $form->form_id)
+                $validatedCount = Validation::where('form_id', $form->form_id)
                     ->count();
                 $form->validated_count = $validatedCount;
 
@@ -104,9 +105,36 @@ class AdminController extends Controller
         ]);
     }
 
+    public function summary($formId)
+    {
+        // Ambil semua data form
+        $total = GrowthRecord::where('form_id', $formId)->count();
+
+        // Hitung valid
+        $valid = Validation::where('form_id', $formId)
+            ->where('status', 'valid')
+            ->count();
+
+        // Hitung invalid
+        $invalid = Validation::where('form_id', $formId)
+            ->where('status', 'invalid')
+            ->count();
+
+        // Pending = yang belum ada record validation
+        $pending = $total - ($valid + $invalid);
+
+        return view('pages.admin.summary', compact(
+            'formId',
+            'total',
+            'valid',
+            'invalid',
+            'pending'
+        ));
+    }
+
     // =========================
-// DELETE FORM
-// =========================
+    // DELETE FORM
+    // =========================
     public function delete($id)
     {
         $form = Form::where('form_id', $id)->firstOrFail();
